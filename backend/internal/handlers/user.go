@@ -307,3 +307,18 @@ func (h *UserHandler) TestBcrypt(c *fiber.Ctx) error {
 		"wrong_password_verification": err != nil,
 	})
 }
+
+// Logout handles user logout
+// @Router /api/v1/users/logout [post]
+func (h *UserHandler) Logout(c *fiber.Ctx) error {
+	// Get user info from context (set by auth middleware)
+	userID := c.Locals("user_id").(uint)
+	username := c.Locals("username").(string)
+
+	return c.JSON(fiber.Map{
+		"message":   "Logout successful",
+		"user_id":   userID,
+		"username":  username,
+		"timestamp": time.Now().Unix(),
+	})
+}

@@ -52,6 +52,7 @@ func main() {
 	// Auth routes
 	api.Post("/users/register", userHandler.Register)
 	api.Post("/login", userHandler.Login)
+	api.Post("/users/logout", middleware.AuthMiddleware(cfg.JWTSecret), userHandler.Logout)
 	api.Get("/users/profile", middleware.AuthMiddleware(cfg.JWTSecret), userHandler.GetProfile)
 	api.Get("/users/all", middleware.AuthMiddleware(cfg.JWTSecret), userHandler.GetAllUsers)
 	api.Get("/users/:id", middleware.AuthMiddleware(cfg.JWTSecret), userHandler.GetUserById)

@@ -37,7 +37,17 @@ func main() {
 
 	// Middleware
 	app.Use(logger.New())
-	app.Use(cors.New())
+	app.Use(cors.New(cors.Config{
+		AllowOrigins:     "https://alerts.health.go.ug,http://localhost:3000,http://localhost:3001",
+		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
+		AllowMethods:     "GET, POST, PUT, DELETE, OPTIONS",
+		AllowCredentials: true,
+	}))
+
+	// Favicon route to prevent 404 errors
+	app.Get("/favicon.ico", func(c *fiber.Ctx) error {
+		return c.Status(204).Send(nil) // Return no content
+	})
 
 	// Swagger documentation
 	app.Get("/swagger/*", swagger.HandlerDefault)
@@ -78,5 +88,14 @@ func main() {
 
 	// Start server
 	log.Printf("Server starting on port %s", cfg.ServerPort)
-	log.Fatal(app.Listen(":" + cfg.ServerPort))
+
+	if cfg.SSLEnabled {
+		if cfg.SSLCertFile == "" || cfg.SSLKeyFile == "" {
+			log.Fatal("SSL is enabled but certificate or key file is not specified")
+		}
+		log.Printf("Starting HTTPS server with SSL certificate: %s", cfg.SSLCertFile)
+		log.Fatal(app.ListenTLS(":"+cfg.ServerPort, cfg.SSLCertFile, cfg.SSLKeyFile))
+	} else {
+		log.Fatal(app.Listen(":" + cfg.ServerPort))
+	}
 }

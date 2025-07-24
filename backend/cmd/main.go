@@ -58,6 +58,7 @@ func main() {
 	// Initialize handlers
 	userHandler := handlers.NewUserHandler(database.GetDB(), cfg.JWTSecret)
 	alertHandler := handlers.NewAlertHandler(database.GetDB())
+	adminUnitsHandler := handlers.NewAdminUnitsHandler(database.GetDB())
 
 	// Auth routes
 	api.Post("/users/register", userHandler.Register)
@@ -72,11 +73,21 @@ func main() {
 	// Alert routes
 	api.Get("/alerts", middleware.AuthMiddleware(cfg.JWTSecret), alertHandler.GetAlerts)
 	api.Get("/alerts/:id", middleware.AuthMiddleware(cfg.JWTSecret), alertHandler.GetAlert)
-	api.Post("/alerts/create", middleware.AuthMiddleware(cfg.JWTSecret), alertHandler.CreateAlert)
+	api.Post("/alerts", middleware.AuthMiddleware(cfg.JWTSecret), alertHandler.CreateAlert)
 	api.Put("/alerts/:id", middleware.AuthMiddleware(cfg.JWTSecret), alertHandler.UpdateAlert)
 	api.Delete("/alerts/:id", middleware.AuthMiddleware(cfg.JWTSecret), alertHandler.DeleteAlert)
+	api.Post("/alerts/:id/verify", alertHandler.VerifyAlert) // No auth required for verification
+	api.Post("/alerts/:id/generate-token", middleware.AuthMiddleware(cfg.JWTSecret), alertHandler.GenerateVerificationToken)
+	api.Post("/alerts/query", middleware.AuthMiddleware(cfg.JWTSecret), alertHandler.QueryAlerts)
 	api.Get("/alerts/not-verified/count", middleware.AuthMiddleware(cfg.JWTSecret), alertHandler.GetNotVerifiedAlertsCount)
 	api.Get("/alerts/verified/count", middleware.AuthMiddleware(cfg.JWTSecret), alertHandler.GetVerifiedAlertsCount)
+
+	// Admin units routes
+	api.Get("/admin-units/regions", adminUnitsHandler.GetAllRegions)
+	api.Get("/admin-units/districts", adminUnitsHandler.GetAllDistricts)
+	api.Get("/admin-units/subcounties", adminUnitsHandler.GetAllSubcounties)
+	api.Get("/admin-units/regions/:region_id/districts", adminUnitsHandler.GetDistrictsByRegion)
+	api.Get("/admin-units/districts/:district_id/subcounties", adminUnitsHandler.GetSubcountiesByDistrict)
 
 	// Health check
 	app.Get("/health", func(c *fiber.Ctx) error {

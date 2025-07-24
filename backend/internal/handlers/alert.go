@@ -53,26 +53,29 @@ func (h *AlertHandler) CreateAlert(c *fiber.Ctx) error {
 	}
 
 	// Set default values
-	if alert.Date.IsZero() {
-		alert.Date = time.Now()
+	now := time.Now()
+	if alert.Date == nil {
+		alert.Date = &now
 	}
-	if alert.Time.IsZero() {
-		alert.Time = time.Now()
+	if alert.Time == nil {
+		alert.Time = &now
 	}
-	if alert.Status == "" {
-		alert.Status = "Pending"
+	if alert.Status == nil || *alert.Status == "" {
+		status := "Pending"
+		alert.Status = &status
 	}
-	if alert.AlertFrom == "" {
-		alert.AlertFrom = "Open Alerts"
+	if alert.AlertFrom == nil || *alert.AlertFrom == "" {
+		alertFrom := "Open Alerts"
+		alert.AlertFrom = &alertFrom
 	}
 
 	// Validate required fields
-	if alert.PersonReporting == "" {
+	if alert.PersonReporting == nil || *alert.PersonReporting == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Person reporting is required",
 		})
 	}
-	if alert.AlertCaseName == "" {
+	if alert.AlertCaseName == nil || *alert.AlertCaseName == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Alert case name is required",
 		})
@@ -377,35 +380,36 @@ func (h *AlertHandler) VerifyAlert(c *fiber.Ctx) error {
 	}
 
 	// Update alert with verification data
-	alert.Status = input.Status
+	alert.Status = &input.Status
 	alert.VerificationDate = &input.VerificationDate
 	alert.VerificationTime = &input.VerificationTime
-	alert.CIFNo = strings.ToUpper(input.CIFNo)
-	alert.PersonReporting = input.PersonReporting
-	alert.Village = input.Village
-	alert.SubCounty = input.SubCounty
-	alert.ContactNumber = input.ContactNumber
-	alert.SourceOfAlert = input.SourceOfAlert
-	alert.AlertCaseName = input.AlertCaseName
-	alert.AlertCaseAge = input.AlertCaseAge
-	alert.AlertCaseSex = input.AlertCaseSex
-	alert.AlertCasePregnantDuration = input.AlertCasePregnantDuration
-	alert.AlertCaseVillage = input.AlertCaseVillage
-	alert.AlertCaseParish = input.AlertCaseParish
-	alert.AlertCaseSubCounty = input.AlertCaseSubCounty
-	alert.AlertCaseDistrict = input.AlertCaseDistrict
-	alert.AlertCaseNationality = input.AlertCaseNationality
-	alert.PointOfContactName = input.PointOfContactName
-	alert.PointOfContactRelationship = input.PointOfContactRelationship
-	alert.PointOfContactPhone = input.PointOfContactPhone
-	alert.History = input.History
-	alert.HealthFacilityVisit = input.HealthFacilityVisit
-	alert.TraditionalHealerVisit = input.TraditionalHealerVisit
-	alert.Symptoms = input.Symptoms
-	alert.Actions = input.Actions
-	alert.Feedback = input.Feedback
+	cifNo := strings.ToUpper(input.CIFNo)
+	alert.CIFNo = &cifNo
+	alert.PersonReporting = &input.PersonReporting
+	alert.Village = &input.Village
+	alert.SubCounty = &input.SubCounty
+	alert.ContactNumber = &input.ContactNumber
+	alert.SourceOfAlert = &input.SourceOfAlert
+	alert.AlertCaseName = &input.AlertCaseName
+	alert.AlertCaseAge = &input.AlertCaseAge
+	alert.AlertCaseSex = &input.AlertCaseSex
+	alert.AlertCasePregnantDuration = &input.AlertCasePregnantDuration
+	alert.AlertCaseVillage = &input.AlertCaseVillage
+	alert.AlertCaseParish = &input.AlertCaseParish
+	alert.AlertCaseSubCounty = &input.AlertCaseSubCounty
+	alert.AlertCaseDistrict = &input.AlertCaseDistrict
+	alert.AlertCaseNationality = &input.AlertCaseNationality
+	alert.PointOfContactName = &input.PointOfContactName
+	alert.PointOfContactRelationship = &input.PointOfContactRelationship
+	alert.PointOfContactPhone = &input.PointOfContactPhone
+	alert.History = &input.History
+	alert.HealthFacilityVisit = &input.HealthFacilityVisit
+	alert.TraditionalHealerVisit = &input.TraditionalHealerVisit
+	alert.Symptoms = &input.Symptoms
+	alert.Actions = &input.Actions
+	alert.Feedback = &input.Feedback
 	alert.IsVerified = true
-	alert.VerifiedBy = input.VerifiedBy
+	alert.VerifiedBy = &input.VerifiedBy
 
 	// Start transaction
 	tx := h.db.Begin()

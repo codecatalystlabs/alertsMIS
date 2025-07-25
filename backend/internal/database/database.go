@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/alertsMIS/backend/internal/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -27,16 +26,7 @@ func InitDB(dsn string) error {
 		return fmt.Errorf("failed to connect to database: %v", err)
 	}
 
-	// Auto migrate the schema
-	err = DB.AutoMigrate(
-		&models.User{},
-		&models.Alert{},
-	)
-	if err != nil {
-		return fmt.Errorf("failed to migrate database: %v", err)
-	}
-
-	log.Println("Database connection established and migrations completed")
+	log.Println("Database connection established")
 	return nil
 }
 

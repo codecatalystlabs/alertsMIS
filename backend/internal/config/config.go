@@ -26,16 +26,13 @@ func LoadConfig() (*Config, error) {
 	godotenv.Load()
 
 	config := &Config{
-		DBHost:      getEnv("DB_HOST", "localhost"),
-		DBPort:      getEnv("DB_PORT", "3306"),
-		DBUser:      getEnv("DB_USER", "root"),
-		DBPassword:  getEnv("DB_PASSWORD", "leaves"),
-		DBName:      getEnv("DB_NAME", "alerts"),
-		ServerPort:  getEnv("SERVER_PORT", "8089"),
-		JWTSecret:   getEnv("JWT_SECRET", "your-secret-key"),
-		SSLEnabled:  getEnv("SSL_ENABLED", "false") == "true",
-		SSLCertFile: getEnv("SSL_CERT_FILE", ""),
-		SSLKeyFile:  getEnv("SSL_KEY_FILE", ""),
+		DBHost:     getEnv("DB_HOST", "localhost"),
+		DBPort:     getEnv("DB_PORT", "3306"),
+		DBUser:     getEnv("DB_USER", "root"),
+		DBPassword: getEnv("DB_PASSWORD", "Felinho@123"),
+		DBName:     getEnv("DB_NAME", "alerts"),
+		ServerPort: getEnv("SERVER_PORT", "8089"),
+		JWTSecret:  getEnv("JWT_SECRET", "your-secret-key"),
 	}
 
 	return config, nil

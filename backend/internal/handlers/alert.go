@@ -160,19 +160,7 @@ func (h *AlertHandler) GetAlerts(c *fiber.Ctx) error {
 		})
 	}
 
-	// Get total count for pagination
-	var total int64
-	h.db.Model(&models.Alert{}).Count(&total)
-
-	return c.JSON(fiber.Map{
-		"alerts": alerts,
-		"pagination": fiber.Map{
-			"page":  page,
-			"limit": limit,
-			"total": total,
-			"pages": (total + int64(limit) - 1) / int64(limit),
-		},
-	})
+	return c.JSON(alerts)
 }
 
 // GetAlert handles retrieving a single alert
@@ -513,7 +501,7 @@ func (h *AlertHandler) GenerateVerificationToken(c *fiber.Ctx) error {
 // @Tags alerts
 // @Accept json
 // @Produce json
-// @Success 200 {object} fiber.Map
+// @Success 200 {object} map[string]int
 // @Failure 500 {object} fiber.Map
 // @Router /api/v1/alerts/verified/count [get]
 func (h *AlertHandler) GetVerifiedAlertsCount(c *fiber.Ctx) error {
@@ -526,9 +514,7 @@ func (h *AlertHandler) GetVerifiedAlertsCount(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.JSON(fiber.Map{
-		"count": count,
-	})
+	return c.JSON(map[string]int64{"count": count})
 }
 
 // GetNotVerifiedAlertsCount returns count of unverified alerts in the last hour
@@ -537,7 +523,7 @@ func (h *AlertHandler) GetVerifiedAlertsCount(c *fiber.Ctx) error {
 // @Tags alerts
 // @Accept json
 // @Produce json
-// @Success 200 {object} fiber.Map
+// @Success 200 {object} map[string]int
 // @Failure 500 {object} fiber.Map
 // @Router /api/v1/alerts/not-verified/count [get]
 func (h *AlertHandler) GetNotVerifiedAlertsCount(c *fiber.Ctx) error {
@@ -550,9 +536,7 @@ func (h *AlertHandler) GetNotVerifiedAlertsCount(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.JSON(fiber.Map{
-		"count": count,
-	})
+	return c.JSON(map[string]int64{"count": count})
 }
 
 // QueryAlerts handles custom alert queries based on verification status and time
